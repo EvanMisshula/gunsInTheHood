@@ -15,6 +15,17 @@ var info = L.control();
 var BoroOrCT = 3; 
 
 //function getColor
+function getColor(d) {
+      
+   return d === null ? '#7CFC00' :
+           d > 50 ? '#800026' :
+           d > 25  ? '#BD0026' :
+           d > 1.25  ? '#E31A1C' :
+           d >= 0  ? '#FC4E2A' :
+           d == -1   ? '#7CFC00' :
+	'#FFFFFF'
+          
+}
 
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div','info');
@@ -63,15 +74,15 @@ info.update = function (props) {
 
 info.addTo(map);
 
-
+// style
 function style(feature) {
     return {
-        fillColor: '#d2b48c',
+        fillColor: getColor(feature.properties.flUnsfP),
         weight: 2,
         opacity: 1,
         color: 'white',
         dashArray: '3',
-        fillOpacity: 0.0
+        fillOpacity: 0.7
     };
 }
 

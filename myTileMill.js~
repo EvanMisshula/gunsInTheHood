@@ -1,4 +1,4 @@
-var myTiles = new L.TileLayer('http://localhost:8000/mbtiles-server.php?db=OSMbase_f9c633.mbtiles&z={z}&x={x}&y={y}',
+var myTiles = new L.TileLayer('http://localhost:8000/mbtiles-server.php?db=nycBase.mbtiles&z={z}&x={x}&y={y}',
     {
     attribution: "Data from OSM and NYPD",
     maxZoom: 17,
@@ -12,8 +12,9 @@ map.setView( new L.LatLng(40.7556,-73.9819), 12).addLayer(myTiles);
 //control
 var info = L.control();
 
-var BoroOrCT = 2; 
+var BoroOrCT = 3; 
 
+//function getColor
 
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div','info');
@@ -29,7 +30,7 @@ info.update = function (props) {
 	     : 'Hover over a police precinct');
 //	document.write("We are in case 1.<br>");
     break;
-      case 2:
+    case 2:
 	this._div.innerHTML = '<h4>Census Tract Info</h4>' + 
 	    (props ? '<b>' + props.BoroName 
 	     + '</b><br /> ' + props.CTLabel  
@@ -44,7 +45,14 @@ info.update = function (props) {
 	     : 'Hover over a census tract');
 //	document.write("We are in case 2.<br>");
 	break;
-	default:
+    case 3:
+	this._div.innerHTML = '<h4>Zip Code Info</h4>' + 
+	    (props ? '<b>' + props.ZCTA5CE00 
+	     + '</b><br /><b>Feels Unsafe (@night) </b> ' + props.flUnsfP
+	     + '%'
+	     : 'Hover over a census tract');
+	break;
+    default:
 	this._div.innerHTML = '<h4>Boro Information</h4>' + 
 	    (props ? '<b>' + props.BoroName + '</b><br /> ' + props.BoroCode
 	     : 'Hover over a Boro');
@@ -112,6 +120,9 @@ switch (BoroOrCT)
     break;
     case 2:
     data = nycTractData;
+    break;
+    case 3:
+    data = nycZipData;
     break;
     default:
     data = nycBoro;
