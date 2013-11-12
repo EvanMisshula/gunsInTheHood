@@ -34,3 +34,12 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# gitignore
+.*
+
+# emacs
+\#*\#
+
+# mbtiles
+*.mbtiles
