@@ -12,19 +12,29 @@ map.setView( new L.LatLng(40.7556,-73.9819), 12).addLayer(myTiles);
 //control
 var info = L.control();
 
-var BoroOrCT = 3; 
-
+var BoroOrCT = 4; 
+var colorBorder = [];
 //function getColor
-function getColor(d) {
+function getColor(d,colorBorder) {
       
-   return d === null ? '#7CFC00' :
-           d > 50 ? '#800026' :
-           d > 25  ? '#BD0026' :
-           d > 1.25  ? '#E31A1C' :
-           d >= 0  ? '#FC4E2A' :
-           d == -1   ? '#7CFC00' :
-	'#FFFFFF'
-          
+   return d === colorBorder[0]  ? '#7CFC00' :
+           d >  colorBorder[1]  ? '#800026' :
+           d >  colorBorder[2]  ? '#BD0026' :
+           d >  colorBorder[3]  ? '#E31A1C' :
+           d >= colorBorder[4]  ? '#FC4E2A' :
+           d == -1 ? '#7CFC00'  : '#FFFFFF' ;
+
+}
+
+function getFillOpacity(d,colorBorder) {
+      
+   return d === colorBorder[0] ? 0.6 :
+           d >  colorBorder[1] ? 0.4 :
+           d >  colorBorder[2] ? 0.4 :
+           d >  colorBorder[3] ? 0.4 :
+           d >= colorBorder[4] ? 0.4 :
+           d == -1             ? 0.7 : 0.8;
+
 }
 
 info.onAdd = function (map) {
@@ -39,7 +49,6 @@ info.update = function (props) {
 	this._div.innerHTML = '<h4>Precinct Number</h4>' + 
 	    (props ? '<b>' + props.Precinct + '</b>'
 	     : 'Hover over a police precinct');
-//	document.write("We are in case 1.<br>");
     break;
     case 2:
 	this._div.innerHTML = '<h4>Census Tract Info</h4>' + 
@@ -54,12 +63,18 @@ info.update = function (props) {
 	     + '<br /><b>Pct Asian </b> ' + props.AsianP
 	     + '<br /><b>Pct Other </b> ' + props.OtherP
 	     : 'Hover over a census tract');
-//	document.write("We are in case 2.<br>");
 	break;
     case 3:
 	this._div.innerHTML = '<h4>Zip Code Info</h4>' + 
 	    (props ? '<b>' + props.ZCTA5CE00 
 	     + '</b><br /><b>Feels Unsafe (@night) </b> ' + props.flUnsfP
+	     + '%'
+	     : 'Hover over a census tract');
+	break;
+    case 4:
+	this._div.innerHTML = '<h4>Zip Code Info</h4>' + 
+	    (props ? '<b>' + props.ZCTA5CE00 
+	     + '</b><br /><b>Cops not effective  </b> ' + props.cpsNtEP
 	     + '%'
 	     : 'Hover over a census tract');
 	break;
@@ -75,17 +90,39 @@ info.update = function (props) {
 info.addTo(map);
 
 // style
-function style(feature) {
-    return {
-        fillColor: getColor(feature.properties.flUnsfP),
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.7
-    };
+function style(feature,colorBorder) {
+    var retVal = {};
+    switch (BoroOrCT) {
+    case 3:
+	retVal = {
+            fillColor: getColor(feature.properties.flUnsfP,
+				colorBorder),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: getFillOpacity(feature.properties.flUnsfP,
+					colorBorder),
+	};
+	break; 
+      case 4:
+	retVal = {
+            fillColor: getColor(feature.properties.cpsNtEP,
+			      colorBorder),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: getFillOpacity(feature.properties.cpsNtEP,
+					colorBorder)
+	};
+	break;
+    default:
+	console.log("We are in default case on the style switch");
+	break;
+    }
+    return(retVal);
 }
-
 var geojson;
 //listener
 function highlightFeature(e) {
@@ -134,6 +171,11 @@ switch (BoroOrCT)
     break;
     case 3:
     data = nycZipData;
+    colorBorder = [ null, 50, 25.5, 1, 0, -1];
+    break;
+    case 4:
+    data = copsData;
+    colorBorder = [ null, 50, 25, 1.25, 0, -1];
     break;
     default:
     data = nycBoro;
