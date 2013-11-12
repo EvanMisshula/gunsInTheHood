@@ -14,26 +14,56 @@ var info = L.control();
 
 var BoroOrCT = 4; 
 var colorBorder = [];
+var data;
+
+function getColorBorder() {
+    switch (BoroOrCT) {
+    case 1:
+	data = nycpp;
+	break;
+    case 2:
+	data = nycTractData;
+	break;
+    case 3:
+	data = nycZipData;
+	colorBorder = [ null, 50, 25.5, 1, 0, -1];
+	break;
+    case 4:
+	data = copsData;
+	colorBorder = [ null, 50, 25, 1.25, 0, -1];
+	break;
+    default:
+	data = nycBoro;
+    break;
+    }
+    return(colorBorder);
+}
+
+
+
 //function getColor
 function getColor(d,colorBorder) {
-      
-   return d === colorBorder[0]  ? '#7CFC00' :
-           d >  colorBorder[1]  ? '#800026' :
-           d >  colorBorder[2]  ? '#BD0026' :
-           d >  colorBorder[3]  ? '#E31A1C' :
-           d >= colorBorder[4]  ? '#FC4E2A' :
+
+    colorBorder = getColorBorder();
+
+    return d === colorBorder[0]  ? '#7CFC00' :
+        d >  colorBorder[1]  ? '#800026' :
+        d >  colorBorder[2]  ? '#BD0026' :
+        d >  colorBorder[3]  ? '#E31A1C' :
+        d >= colorBorder[4]  ? '#FC4E2A' :
            d == -1 ? '#7CFC00'  : '#FFFFFF' ;
 
 }
 
 function getFillOpacity(d,colorBorder) {
       
-   return d === colorBorder[0] ? 0.6 :
-           d >  colorBorder[1] ? 0.4 :
-           d >  colorBorder[2] ? 0.4 :
-           d >  colorBorder[3] ? 0.4 :
-           d >= colorBorder[4] ? 0.4 :
-           d == -1             ? 0.7 : 0.8;
+    colorBorder = getColorBorder();
+    return d === colorBorder[0] ? 0.6 :
+        d >  colorBorder[1] ? 0.4 :
+        d >  colorBorder[2] ? 0.4 :
+        d >  colorBorder[3] ? 0.4 :
+        d >= colorBorder[4] ? 0.4 :
+        d == -1             ? 0.7 : 0.8;
 
 }
 
@@ -160,27 +190,6 @@ function onEachFeature(feature, layer) {
     });
 }
 
-var data;
-switch (BoroOrCT)
-{
-    case 1:
-    data = nycpp;
-    break;
-    case 2:
-    data = nycTractData;
-    break;
-    case 3:
-    data = nycZipData;
-    colorBorder = [ null, 50, 25.5, 1, 0, -1];
-    break;
-    case 4:
-    data = copsData;
-    colorBorder = [ null, 50, 25, 1.25, 0, -1];
-    break;
-    default:
-    data = nycBoro;
-    break;
-}
  
 geojson = L.geoJson(data, {
     style: style,
