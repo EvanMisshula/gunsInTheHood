@@ -16,48 +16,53 @@ var BoroOrCT = 4;
 var colorBorder = [];
 var data;
 
-function getColorBorder() {
-    switch (BoroOrCT) {
-    case 1:
-	data = nycpp;
-	break;
-    case 2:
-	data = nycTractData;
-	break;
-    case 3:
-	data = nycZipData;
-	colorBorder = [ null, 50, 25.5, 1, 0, -1];
-	break;
-    case 4:
-	data = copsData;
-	colorBorder = [ null, 50, 25, 1.25, 0, -1];
-	break;
-    default:
-	data = nycBoro;
+//data and color b
+switch (BoroOrCT) {
+case 1:
+    data = nycpp;
     break;
-    }
-    return(colorBorder);
+case 2:
+    data = nycTractData;
+    break;
+case 3:
+    data = nycZipData;
+    colorBorder = [ null, 50, 25.5, 1, 0, -1];
+    break;
+case 4:
+    data = copsData;
+    colorBorder = [ null, 50, 25, 1.25, 0, -1];
+    break;
+default:
+    data = nycBoro;
+    break;
+}
+
+console.log(" colorBorder =" + colorBorder);
+
+function getColorBorder() {
+   return(colorBorder);
 }
 
 
-
 //function getColor
-function getColor(d,colorBorder) {
+function getColor(d) {
 
-    colorBorder = getColorBorder();
+//    colorBorder = getColorBorder();
+    console.log(colorBorder[0]);
 
     return d === colorBorder[0]  ? '#7CFC00' :
         d >  colorBorder[1]  ? '#800026' :
         d >  colorBorder[2]  ? '#BD0026' :
         d >  colorBorder[3]  ? '#E31A1C' :
         d >= colorBorder[4]  ? '#FC4E2A' :
-           d == -1 ? '#7CFC00'  : '#FFFFFF' ;
+        d == -1 ? '#7CFC00'  : '#FFFFFF' ;
 
 }
 
-function getFillOpacity(d,colorBorder) {
+function getFillOpacity(d) {
       
-    colorBorder = getColorBorder();
+//    colorBorder = getColorBorder();
+    console.log(colorBorder[0]);
     return d === colorBorder[0] ? 0.6 :
         d >  colorBorder[1] ? 0.4 :
         d >  colorBorder[2] ? 0.4 :
@@ -66,6 +71,42 @@ function getFillOpacity(d,colorBorder) {
         d == -1             ? 0.7 : 0.8;
 
 }
+
+// style
+function style(feature,colorBorder) {
+    var retVal = {};
+    switch (BoroOrCT) {
+    case 3:
+	retVal = {
+            fillColor: getColor(feature.properties.flUnsfP,
+				colorBorder),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: getFillOpacity(feature.properties.flUnsfP,
+					colorBorder),
+	};
+	break; 
+      case 4:
+	retVal = {
+            fillColor: getColor(feature.properties.cpsNtEP,
+			      colorBorder),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: getFillOpacity(feature.properties.cpsNtEP,
+					colorBorder)
+	};
+	break;
+    default:
+	console.log("We are in default case on the style switch");
+	break;
+    }
+    return(retVal);
+}
+
 
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div','info');
@@ -117,42 +158,10 @@ info.update = function (props) {
     };
 };
 
+
 info.addTo(map);
 
-// style
-function style(feature,colorBorder) {
-    var retVal = {};
-    switch (BoroOrCT) {
-    case 3:
-	retVal = {
-            fillColor: getColor(feature.properties.flUnsfP,
-				colorBorder),
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: getFillOpacity(feature.properties.flUnsfP,
-					colorBorder),
-	};
-	break; 
-      case 4:
-	retVal = {
-            fillColor: getColor(feature.properties.cpsNtEP,
-			      colorBorder),
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: getFillOpacity(feature.properties.cpsNtEP,
-					colorBorder)
-	};
-	break;
-    default:
-	console.log("We are in default case on the style switch");
-	break;
-    }
-    return(retVal);
-}
+
 var geojson;
 //listener
 function highlightFeature(e) {
