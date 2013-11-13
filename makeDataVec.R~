@@ -1,0 +1,15 @@
+makeDataVec<- function(ab)
+    {
+        library(rjson)
+        vecData <- rep(1,200)
+        for(i in 1:200)
+            {
+                if(is.null(ab$features[[i]]$properties$WIDyPct)) {
+                    vecData[i] <- NA
+                } else {
+                    vecData <- ab$features[[i]]$properties$WIDyPct
+                }
+            }
+        return(vecData)
+    }
+                

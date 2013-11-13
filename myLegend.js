@@ -3,7 +3,12 @@ var legend = L.control({position: 'bottomleft'});
 legend.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info legend'),
-        homCount = ['Missing','gt 50', '25-50', '1.25-25', 'gte 0'];
+        homCount = ['Missing',
+		    'gt ' + colorBorder[1], 
+		    + colorBorder[2] + '-' + colorBorder[1],
+		    + colorBorder[3] + '-' + colorBorder[2],
+		    'gte ' + colorBorder[4] ];
+
         labels = [];
 
 //    var colors  = ['#b6a8aa','#faf6f6','#e3e392','#A1DAB4','#41B6C4','#225EA8'];
