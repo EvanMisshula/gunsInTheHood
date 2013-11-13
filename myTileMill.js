@@ -12,7 +12,7 @@ map.setView( new L.LatLng(40.7556,-73.9819), 12).addLayer(myTiles);
 //control
 var info = L.control();
 
-var BoroOrCT = 5; 
+var BoroOrCT = 6; 
 var colorBorder = [];
 var data;
 
@@ -36,12 +36,16 @@ case 5:
     data = getGunData;
     colorBorder =[null, 27, 10.5, 0, 0, -1 ];
     break;
+case 6:
+    data = getGunData;
+    colorBorder =[null, 33, 19.5, 0, 0, -1 ];
+    break;
 default:
     data = nycBoro;
     break;
 }
 
-console.log(" colorBorder =" + colorBorder);
+//console.log(" colorBorder =" + colorBorder);
 
 function getColorBorder() {
    return(colorBorder);
@@ -116,6 +120,18 @@ function style(feature,colorBorder) {
 					colorBorder)
 	};
 	break;
+      case 6:
+	retVal = {
+            fillColor: getColor(feature.properties.cpsNtEP,
+			      colorBorder),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: getFillOpacity(feature.properties.cpsNtEP,
+					colorBorder)
+	};
+	break;
     default:
 	console.log("We are in default case on the style switch");
 	break;
@@ -168,7 +184,14 @@ info.update = function (props) {
     case 5:
 	this._div.innerHTML = '<h4>Zip Code Info</h4>' + 
 	    (props ? '<b>' + props.ZCTA5CE00 
-	     + '</b><br /><b>Can get a gun in 1 day  </b> ' + props.cpsNtEP
+	     + '</b><br /><b>Can get a gun in 1 day  </b> ' + props.WIDyPct
+	     + '%'
+	     : 'Hover over a zip code');
+	break;
+    case 6:
+	this._div.innerHTML = '<h4>Zip Code Info</h4>' + 
+	    (props ? '<b>' + props.ZCTA5CE00 
+	     + '</b><br /><b>Connected to people w/Guns </b> ' + props.pctKnow
 	     + '%'
 	     : 'Hover over a zip code');
 	break;
